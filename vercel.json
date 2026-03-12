@@ -1,0 +1,9 @@
+{
+  "buildCommand": "npm run build:client",
+  "outputDirectory": "dist/public",
+  "framework": null,
+  "installCommand": "npm install",
+  "rewrites": [
+    { "source": "/((?!assets|favicon\\.png).*)", "destination": "/index.html" }
+  ]
+}
