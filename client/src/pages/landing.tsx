@@ -648,7 +648,7 @@ function FeedbackSection() {
           primaryEmail: data.email,
           additionalEmails: null
         },
-        websiteSource: ["JOINCLOUD_IN"],
+        websiteSource: ["JOINCLOUD_CLOUD"],
         additionalDetails
       };
 
@@ -807,7 +807,7 @@ function WaitlistSection({ waitlistRef }: { waitlistRef: React.RefObject<HTMLDiv
           primaryEmail: data.email,
           additionalEmails: null
         },
-        websiteSource: ["JOINCLOUD_IN"],
+        websiteSource: ["JOINCLOUD_CLOUD"],
         additionalDetails
       };
 
