@@ -26,6 +26,22 @@ interface SpeedParticle {
   opacity: number;
   length: number;
 }
+'use client';
+
+import fluidCursor from '@/lib/use-FluidCursor';
+
+const FluidCursor = () => {
+  useEffect(() => {
+    fluidCursor();
+  }, []);
+
+  return (
+    <div className='fixed top-0 left-0 z-2 pointer-events-none'>
+      <canvas id='fluid' className='w-screen h-screen' />
+    </div>
+  );
+};
+
 
 function MouseSpeedEffect() {
   const [particles, setParticles] = useState<SpeedParticle[]>([]);
@@ -237,15 +253,8 @@ function Hero({ onJoinWaitlistClick }: { onJoinWaitlistClick: () => void }) {
           Join the waitlist before launch and get a 30-day free trial when JoinCloud goes live.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button
-            size="lg"
-            className="text-base px-10 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-            data-testid="button-join-waitlist-hero"
-            onClick={onJoinWaitlistClick}
-          >
-            <Bell className="w-5 h-5 mr-2" />
-            Join the Waitlist
-          </Button>
+        <button className="glow-on-hover font-semibold" type="button" onClick={onJoinWaitlistClick}> <Bell className="w-4 h-4 mr-2" />
+        Join the Waitlist</button>
         </div>
         <p className="mt-4 text-sm text-muted-foreground">Fast. Private. Easy to use.</p>
         <div className="mt-8 p-4 rounded-xl bg-primary/10 border border-primary/30 max-w-md mx-auto glow-primary">
@@ -1077,7 +1086,7 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-background grain-bg">
-      <MouseSpeedEffect />
+      <FluidCursor />
       <Header onJoinWaitlistClick={handleJoinWaitlistClick} />
       <main>
         <Hero onJoinWaitlistClick={handleJoinWaitlistClick} />
