@@ -979,7 +979,7 @@ function SupportSection() {
             </div>
             <div className="text-left">
               <p className="text-sm text-muted-foreground">Email</p>
-              <p className="text-foreground font-medium">vinay@arevei.com</p>
+              <p className="text-foreground font-medium">info@joincloud.in</p>
             </div>
           </a>
           <a
