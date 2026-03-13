@@ -971,7 +971,7 @@ function SupportSection() {
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
           <a
-            href="mailto:support@joincloud.cloud"
+            href="mailto:info@joincloud.in"
             className="flex items-center gap-3 px-6 py-4 rounded-xl bg-card border border-border hover:border-primary/50 hover:bg-card/80 transition-all duration-300 group"
           >
             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
