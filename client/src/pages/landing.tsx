@@ -244,7 +244,7 @@ function Hero({ onJoinWaitlistClick }: { onJoinWaitlistClick: () => void }) {
           <span className="text-primary text-glow">Your Data. Your Device.</span>
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-2">
-          Privacy-first file sharing cloud that keeps your data on your device not on servers.
+          Share files directly across devices and OS from your system, and save time on two-step sharing.
         </p>
         <p className="text-sm text-muted-foreground/80 max-w-2xl mx-auto mb-4">
           Built &amp; led by Vinay Shakyawar
@@ -260,7 +260,9 @@ function Hero({ onJoinWaitlistClick }: { onJoinWaitlistClick: () => void }) {
         <div className="mt-8 p-4 rounded-xl bg-primary/10 border border-primary/30 max-w-md mx-auto glow-primary">
           <div className="flex items-center justify-center gap-2 text-primary">
             <Sparkles className="w-5 h-5" />
-            <span className="font-semibold">Get a 30-day free trial when you join the waitlist before launch.</span>
+            <span className="font-semibold">
+              Join the waitlist now to lock in a 30-day free trial and 1 year of free updates for the first 1,000 beta users.
+            </span>
           </div>
         </div>
 
@@ -290,17 +292,17 @@ function CoreBenefits() {
   const benefits = [
     {
       icon: Zap,
-      title: "Lightning Fast",
-      description: "Direct LAN transfers at maximum speed. No uploads, no waiting. Share files instantly.",
+      title: "Fast",
+      description: "Sharing files directly reduces friction and increases productivity.",
     },
     {
       icon: Shield,
-      title: "Completely Private",
-      description: "Your files never touch third party servers. Everything stays on your device.",
+      title: "Private",
+      description: "No one can access until shared and your files never touch third party servers.",
     },
     {
       icon: HardDrive,
-      title: "Total Control",
+      title: "Easy",
       description: "Manage your files, choose what to share, and revoke access anytime.",
     },
   ];
@@ -310,10 +312,10 @@ function CoreBenefits() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            What is JoinCloud?
+            Save time with JoinCloud?
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            JoinCloud transforms your device into a personal cloud. Share files at full LAN speed, collaborate with your team, and preview high resolution content directly in the browser. No uploads. No waiting.
+            JoinCloud uses storage space on your device as a local personal cloud. Share or manage files in a single place under your control, collaborate with your team, and preview images and video content on the go before downloading.
           </p>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
@@ -338,12 +340,12 @@ function Features() {
   const availableFeatures = [
     {
       icon: Users,
-      title: "Team Space Collaboration",
-      description: "Create a shared workspace with nearby JoinCloud users. Share file links instantly and collaborate in real time with your team.",
+      title: "Team Collaboration",
+      description: "Shared workspace with nearby JoinCloud users, with quick chat-based discussion on project files.",
     },
     {
       icon: Eye,
-      title: "4K Preview Without Download",
+      title: "4K Preview",
       description: "Share high resolution files up to 4K and let recipients preview them directly in their browser. No download required.",
     },
     {
@@ -363,23 +365,23 @@ function Features() {
     },
     {
       icon: Link2,
-      title: "One Click Link Sharing",
-      description: "Generate shareable links for any file or folder. Recipients can view or download instantly through their browser.",
+      title: "No Limits on File Size",
+      description: "Share files without worrying about file size limits.",
     },
     {
       icon: UserX,
       title: "No Signup Required",
-      description: "Download and start using immediately. Free trial with no limits and no credit card required.",
+      description: "Download and start using immediately. Free trial, no credit card required.",
     },
     {
       icon: Wifi,
-      title: "High Speed LAN Transfers",
-      description: "Optimized for local network performance. Transfer large files at maximum speed without internet dependency.",
+      title: "Fast Turnaround",
+      description: "Optimized for local network performance, transfer large files peer to peer. No need to transfer to cloud or external drive.",
     },
     {
       icon: Lock,
       title: "Private and Secure",
-      description: "Your files never leave your device. Share only what you choose, when you choose, with complete control.",
+      description: "Your files never touch third party servers. Only files you add into JoinCloud can be shared. System files stay isolated.",
     },
   ];
 
@@ -387,12 +389,12 @@ function Features() {
     {
       icon: Globe,
       title: "Global Sharing",
-      description: "Share files with anyone, anywhere in the world. Access your cloud beyond your local network.",
+      description: "Share files directly with anyone, anywhere in the world, with no need to upload to a cloud server.",
     },
     {
       icon: Monitor,
       title: "Remote Cloud Access",
-      description: "Control your personal cloud from any browser, anywhere. Full access to your files from any location.",
+      description: "Control your personal cloud from any browser, anywhere.",
     },
   ];
 
@@ -401,10 +403,10 @@ function Features() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            v0.3.4 Features
+            v0.3.4 Beta Features
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Powerful tools for seamless file sharing and team collaboration
+            We care about your privacy and time, and we are happy to share that we are launching soon.
           </p>
         </div>
 
@@ -550,27 +552,22 @@ function HowItWorks() {
     {
       icon: Download,
       title: "Install JoinCloud",
-      description: "Download and launch in seconds. Only you need the app installed.",
+      description: "Download and launch in seconds.",
     },
     {
       icon: Folder,
       title: "Choose Your Files",
-      description: "Select any file or folder. Your data stays on your device.",
+      description: "Select any file and upload.",
     },
     {
       icon: Link2,
-      title: "Get Your Link",
+      title: "Create Share",
       description: "Instantly generate a shareable link or QR code.",
-    },
-    {
-      icon: Share2,
-      title: "Share Anywhere",
-      description: "Send via chat, email, or scan with any device.",
     },
     {
       icon: Globe,
       title: "Access Instantly",
-      description: "Recipients preview or download directly from your device.",
+      description: "Open the link on any device to preview and download.",
     },
   ];
 
@@ -582,10 +579,10 @@ function HowItWorks() {
             How It Works
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            From install to sharing in under a minute. It's that simple.
+            From install to sharing, easy and simple. No tech complexity. Made for you.
           </p>
         </div>
-        <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map((step, index) => (
             <Card key={index} className="bg-[#00080A] border-[#001C25] hover:border-primary/30 transition-all duration-200" data-testid={`card-step-${index + 1}`}>
               <CardContent className="p-6 text-center">
@@ -974,7 +971,7 @@ function SupportSection() {
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
           <a
-            href="mailto:vinay@arevei.com"
+            href="mailto:support@joincloud.cloud"
             className="flex items-center gap-3 px-6 py-4 rounded-xl bg-card border border-border hover:border-primary/50 hover:bg-card/80 transition-all duration-300 group"
           >
             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
@@ -999,6 +996,15 @@ function SupportSection() {
               <p className="text-foreground font-medium">+91 9625440855</p>
             </div>
           </a>
+          <div className="flex items-center gap-3 px-6 py-4 rounded-xl bg-card border border-border hover:border-primary/50 hover:bg-card/80 transition-all duration-300">
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
+              <Headphones className="w-6 h-6 text-primary" />
+            </div>
+            <div className="text-left">
+              <p className="text-sm text-muted-foreground">In-App Support</p>
+              <p className="text-foreground font-medium">Chat with us from inside JoinCloud.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

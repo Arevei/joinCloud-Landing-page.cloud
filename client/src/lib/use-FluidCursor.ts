@@ -19,7 +19,7 @@ const useFluidCursor = () => {
       SHADING: true,
       COLOR_UPDATE_SPEED: 10,
       PAUSED: false,
-      BACK_COLOR: { r: 0.5, g: 0, b: 0 },
+      BACK_COLOR: { r: 0, g: 0.02, b: 0.04 },
       TRANSPARENT: true,
     };
   
@@ -1250,12 +1250,21 @@ const useFluidCursor = () => {
       return delta;
     }
   
+    // Brand palette: primary cyan #2FB7FF, teal #0ea5e9, green #22C55E, deep blue #0369a1 (RGB 0-1)
+    const BRAND_COLORS = [
+      { r: 47 / 255, g: 183 / 255, b: 255 / 255 },
+      { r: 14 / 255, g: 165 / 255, b: 233 / 255 },
+      { r: 34 / 255, g: 197 / 255, b: 94 / 255 },
+      { r: 3 / 255, g: 105 / 255, b: 161 / 255 },
+      { r: 0.08, g: 0.55, b: 0.95 },
+    ];
     function generateColor() {
-      let c = HSVtoRGB(Math.random(), 1.0, 1.0);
-      c.r *= 0.15;
-      c.g *= 0.15;
-      c.b *= 0.15;
-      return c;
+      const c = BRAND_COLORS[Math.floor(Math.random() * BRAND_COLORS.length)];
+      return {
+        r: c.r * 0.2,
+        g: c.g * 0.2,
+        b: c.b * 0.2,
+      };
     }
   
     function HSVtoRGB(h, s, v) {
