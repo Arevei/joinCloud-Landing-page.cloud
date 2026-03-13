@@ -1250,13 +1250,14 @@ const useFluidCursor = () => {
       return delta;
     }
   
-    // Brand palette: primary cyan #2FB7FF, teal #0ea5e9, green #22C55E, deep blue #0369a1 (RGB 0-1)
+    // Brand palette: primary cyan and blues (RGB 0-1)
     const BRAND_COLORS = [
       { r: 47 / 255, g: 183 / 255, b: 255 / 255 },
       { r: 14 / 255, g: 165 / 255, b: 233 / 255 },
-      { r: 34 / 255, g: 197 / 255, b: 94 / 255 },
       { r: 3 / 255, g: 105 / 255, b: 161 / 255 },
       { r: 0.08, g: 0.55, b: 0.95 },
+      { r: 224 / 255, g: 242 / 255, b: 254 / 255 }, // soft white-blue
+      { r: 2 / 255, g: 6 / 255, b: 23 / 255 }, // near-black blue
     ];
     function generateColor() {
       const c = BRAND_COLORS[Math.floor(Math.random() * BRAND_COLORS.length)];

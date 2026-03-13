@@ -249,9 +249,7 @@ function Hero({ onJoinWaitlistClick }: { onJoinWaitlistClick: () => void }) {
         <p className="text-sm text-muted-foreground/80 max-w-2xl mx-auto mb-4">
           Built &amp; led by Vinay Shakyawar
         </p>
-        <p className="text-base text-muted-foreground/70 max-w-xl mx-auto mb-10">
-          Join the waitlist before launch and get a 30-day free trial when JoinCloud goes live.
-        </p>
+        
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
         <button className="glow-on-hover font-semibold" type="button" onClick={onJoinWaitlistClick}> <Bell className="w-4 h-4 mr-2" />
         Join the Waitlist</button>
@@ -603,20 +601,21 @@ function HowItWorks() {
 
 function DesignPhilosophy() {
   const principles = [
-    "Simple and intuitive. Upload, share, and access in seconds.",
-    "Built for speed. Transfer files at full LAN bandwidth.",
-    "Your data stays yours. No third party servers, no compromises.",
-    "Works everywhere. Access from any device on your network.",
+    "Video editor sharing files between devices, laptop, pc, mobile or tablet. ",
+    "Creators or Production houses who have to move large files frequently",
+    "For creating a home cloud network, to bring all files at one place.",
+    "File changes and move files again, we feel the pain, preview first before downloading. ",
+    "Research organizations who don’t want to share through cloud servers ",
+    "Privacy conscious organization, who want to keep their files safe by keeping it locally.",
+    "Trip photos downloading and checking, do the other way check before download.",
   ];
 
   return (
     <section className="py-24 px-6 bg-[#00080A]">
       <div className="max-w-4xl mx-auto text-center">
-        <div className="w-16 h-16 rounded-2xl bg-primary/15 border border-primary/20 flex items-center justify-center mx-auto mb-8">
-          <Shield className="w-8 h-8 text-primary" />
-        </div>
+       
         <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-          Built for Simplicity
+        Who can use this
         </h2>
         <div className="space-y-4 max-w-2xl mx-auto">
           {principles.map((principle, index) => (
@@ -869,13 +868,14 @@ function WaitlistSection({ waitlistRef }: { waitlistRef: React.RefObject<HTMLDiv
             <Bell className="w-8 h-8 text-primary" />
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Get Notified When JoinCloud Is Available
+          Join us to create something better for the future. Get notified when JoinCloud launches. 
+
           </h2>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-            JoinCloud is coming soon to more platforms and regions. Join the waitlist now to lock in a 30-day free trial when it launches for you.
+          Join the waitlist now to lock in a 30-day free trial and 1 year free updates. For our early 1000 beta users.  
           </p>
           <p className="mt-2 text-sm text-muted-foreground/80">
-            Expected launch: April 2026.
+          Launch Date: 12th April 2026.
           </p>
         </div>
 
