@@ -244,7 +244,7 @@ function Hero({ onJoinWaitlistClick }: { onJoinWaitlistClick: () => void }) {
           <span className="text-primary text-glow">Your Data. Your Device.</span>
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-2">
-          Share files directly across devices and OS from your system, and save time on two-step sharing.
+          Share files directly across devices and OS from your system, and save time on two step sharing.
         </p>
         <p className="text-sm text-muted-foreground/80 max-w-2xl mx-auto mb-4">
           Built &amp; led by Vinay Shakyawar
@@ -313,7 +313,7 @@ function CoreBenefits() {
             Save time with JoinCloud?
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            JoinCloud uses storage space on your device as a local personal cloud. Share or manage files in a single place under your control, collaborate with your team, and preview images and video content on the go before downloading.
+            JoinCloud uses a storage space in your device as a local personal cloud. Share or manage files in a single place in your control, collaborate with your team, and preview image and video content on the go on when shared before downloading.
           </p>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
@@ -339,7 +339,7 @@ function Features() {
     {
       icon: Users,
       title: "Team Collaboration",
-      description: "Shared workspace with nearby JoinCloud users, with quick chat-based discussion on project files.",
+      description: "Shared workspace with nearby JoinCloud users, with quick chat based discussion on project files.",
     },
     {
       icon: Eye,
@@ -379,7 +379,7 @@ function Features() {
     {
       icon: Lock,
       title: "Private and Secure",
-      description: "Your files never touch third party servers. Only files you add into JoinCloud can be shared. System files stay isolated.",
+      description: "Your files never touch third party servers. Only added files in the joincloud can be shared with others. System files are isolated from joincloud.",
     },
   ];
 
@@ -577,7 +577,7 @@ function HowItWorks() {
             How It Works
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            From install to sharing, easy and simple. No tech complexity. Made for you.
+            From install to sharing, Easy and Simple. No Tech Complexity. Made for You.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -601,13 +601,13 @@ function HowItWorks() {
 
 function DesignPhilosophy() {
   const principles = [
-    "Video editor sharing files between devices, laptop, pc, mobile or tablet. ",
-    "Creators or Production houses who have to move large files frequently",
-    "For creating a home cloud network, to bring all files at one place.",
-    "File changes and move files again, we feel the pain, preview first before downloading. ",
-    "Research organizations who don’t want to share through cloud servers ",
-    "Privacy conscious organization, who want to keep their files safe by keeping it locally.",
-    "Trip photos downloading and checking, do the other way check before download.",
+    "Video editors who need to share files between devices like a laptop, PC, mobile, or tablet.",
+    "Creators or production teams who frequently move large files between devices.",
+    "People who want a home cloud, where all files can be accessed from one place on their own network.",
+    "Anyone who often edits or updates files, and wants to preview them before downloading again.",
+    "Research organizations that prefer not to send files through external cloud servers.",
+    "Privacy-focused organizations that want to keep their files safe by storing and sharing them locally.",
+    "People sharing travel or trip photos, who want to preview images first before downloading them.",
   ];
 
   return (
