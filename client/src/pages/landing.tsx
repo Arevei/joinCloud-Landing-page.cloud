@@ -244,7 +244,8 @@ function Hero({ onJoinWaitlistClick }: { onJoinWaitlistClick: () => void }) {
           <span className="text-primary text-glow">Your Data. Your Device.</span>
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-2">
-          Share files directly across devices and OS from your system, and save time on two-step sharing.
+        Share files directly from your system as a secure shared resource, enabling a fast, single-step transfer experience. Benefit from ultra-fast local transfers or seamless remote sharing through a public network tunnel.
+
         </p>
         <p className="text-sm text-muted-foreground/80 max-w-2xl mx-auto mb-4">
           Built &amp; led by Vinay Shakyawar
@@ -436,18 +437,18 @@ function Features() {
 
         <div>
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-8 h-8 rounded-full bg-[#F59E0B]/20 border border-[#F59E0B]/30 flex items-center justify-center">
+            {/* <div className="w-8 h-8 rounded-full bg-[#F59E0B]/20 border border-[#F59E0B]/30 flex items-center justify-center">
               <Clock className="w-5 h-5 text-[#F59E0B]" />
-            </div>
-            <h3 className="text-2xl font-bold text-foreground">Coming Soon</h3>
+            </div> */}
+            {/* <h3 className="text-2xl font-bold text-foreground">Coming Soon</h3> */}
           </div>
           <div className="grid md:grid-cols-2 gap-6">
             {comingSoonFeatures.map((feature, index) => (
               <Card key={index} className="bg-[#000405] border-[#001C25] border-dashed opacity-80" data-testid={`feature-coming-${index + 1}`}>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-[#F59E0B]/15 border border-[#F59E0B]/20 flex items-center justify-center shrink-0">
-                      <feature.icon className="w-6 h-6 text-[#F59E0B]" />
+                    <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/20 flex items-center justify-center shrink-0">
+                      <feature.icon className="w-6 h-6 text-primary" />
                     </div>
                     <div>
                       <h4 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h4>
