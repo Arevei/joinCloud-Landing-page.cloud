@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Full-Stack Dev Server (Express + Vite)",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": ["/Users/vinayshakyawar/Documents/joincloud-main/joinCloud-Landing-page.cloud/.claude/start-dev.sh"],
+      "port": 5001
+    }
+  ]
+}
