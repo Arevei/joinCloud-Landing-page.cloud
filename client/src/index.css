@@ -391,3 +391,24 @@
   50% { background-position: 400% 0; }
   100% { background-position: 0 0; }
 }
+
+@keyframes nodePulse {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.8; }
+}
+
+/* CTA button — consistent across all sections */
+.cta-btn {
+  transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  border: none;
+}
+.cta-btn:hover {
+  background-color: #5DC8FF !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(47, 183, 255, 0.35);
+}
+.cta-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(47, 183, 255, 0.2);
+}

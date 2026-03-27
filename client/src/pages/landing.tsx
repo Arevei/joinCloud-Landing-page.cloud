@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,14 +7,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Download, Folder, Share2, Shield, Lock, Zap, HardDrive, Globe, Monitor, Send, CheckCircle, Clock, Sparkles, Link2, UserX, Wifi, Bell, Users, Smartphone, QrCode, FolderOpen, Eye, Mail, MessageCircle, Headphones, ChevronDown } from "lucide-react";
+import { Download, Folder, Share2, Shield, Zap, HardDrive, Globe, Monitor, Send, Link2, UserX, Wifi, Bell, Users, Smartphone, QrCode, FolderOpen, Eye, Mail, MessageCircle, Headphones } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import joincloudLogo from "/joincloud-logo.png";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 
@@ -172,374 +171,791 @@ function Header({ onJoinWaitlistClick }: { onJoinWaitlistClick: () => void }) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
-        scrolled ? "bg-[#000A0D]/95 backdrop-blur-md border-b border-[#001C25]" : "bg-transparent"
-      }`}
+    /* Outer positioning wrapper — fixed, centred, floats above page */
+    <div
+      className="fixed z-50 left-1/2 -translate-x-1/2"
+      style={{ top: '14px', width: 'calc(100% - 40px)', maxWidth: '1060px' }}
       data-testid="header"
     >
-      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <img src={joincloudLogo} alt="JoinCloud" className="h-8 w-auto object-contain" />
-          <span className="text-xl font-bold text-foreground">JoinCloud</span>
+      <header
+        style={{
+          background: scrolled ? 'rgba(0,10,13,0.92)' : 'rgba(0,10,13,0.80)',
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
+          border: '0.5px solid rgba(47,183,255,0.12)',
+          borderRadius: '14px',
+          height: '54px',
+          boxShadow: scrolled
+            ? '0 8px 32px rgba(0,0,0,0.45), 0 0 0 0.5px rgba(47,183,255,0.08)'
+            : '0 4px 16px rgba(0,0,0,0.3)',
+          transition: 'background 0.2s ease, box-shadow 0.2s ease',
+        }}
+      >
+        <div className="relative flex items-center h-full px-5">
+
+          {/* Logo */}
+          <div className="shrink-0 z-10">
+            <span style={{ fontWeight: 700, fontSize: '18px', letterSpacing: '-0.02em' }}>
+              <span style={{ color: '#FFFFFF' }}>Join</span>
+              <span style={{ color: '#2FB7FF' }}>Cloud</span>
+            </span>
+          </div>
+
+          {/* Nav — absolutely centred inside the pill */}
+          <nav
+            className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center"
+            style={{ gap: '28px' }}
+            aria-label="Primary"
+          >
+            {[
+              { label: 'Features',    href: '#features',    testId: 'link-features' },
+              { label: 'How It Works',href: '#how-it-works',testId: 'link-how-it-works' },
+              { label: 'Pricing',     href: '#pricing',     testId: '' },
+              // { label: 'Blog',        href: '/blog',        testId: 'link-blog' },
+            ].map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                data-testid={link.testId || undefined}
+                className="whitespace-nowrap transition-colors duration-150 hover:text-white"
+                style={{ color: '#8B9CA3', fontSize: '13px', textDecoration: 'none', fontWeight: 450 }}
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+
+          {/* Right side actions */}
+          <div className="ml-auto shrink-0 z-10 flex items-center" style={{ gap: '16px' }}>
+            <a
+              href="#"
+              className="hidden sm:block transition-colors duration-150 hover:text-white"
+              style={{ color: '#8B9CA3', fontSize: '13px', textDecoration: 'none', fontWeight: 450 }}
+            >
+              Sign in
+            </a>
+            <button
+              onClick={onJoinWaitlistClick}
+              data-testid="button-join-waitlist-header"
+              className="cta-btn"
+              style={{
+                background: '#2FB7FF',
+                color: '#000405',
+                fontWeight: 700,
+                fontSize: '12px',
+                borderRadius: '99px',
+                padding: '7px 18px',
+                whiteSpace: 'nowrap',
+                letterSpacing: '0.01em',
+              }}
+            >
+              Claim Your Spot
+            </button>
+          </div>
+
         </div>
-        <nav className="hidden md:flex items-center gap-8">
-          <a
-            href="#features"
-            className="text-muted-foreground hover:text-primary transition-colors duration-150 text-sm font-medium"
-            data-testid="link-features"
-          >
-            Features
-          </a>
-          <a
-            href="#how-it-works"
-            className="text-muted-foreground hover:text-primary transition-colors duration-150 text-sm font-medium"
-            data-testid="link-how-it-works"
-          >
-            How It Works
-          </a>
-          <a
-            href="#feedback"
-            className="text-muted-foreground hover:text-primary transition-colors duration-150 text-sm font-medium"
-            data-testid="link-feedback"
-          >
-            Feedback
-          </a>
-        </nav>
-        <Button
-          className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-          data-testid="button-join-waitlist-header"
-          onClick={onJoinWaitlistClick}
+      </header>
+    </div>
+  );
+}
+
+/* ── Node Network ────────────────────────────────────────────── */
+
+interface NetworkNode {
+  x: number; y: number;
+  ring: number; r: number;
+  delay: number; duration: number;
+}
+
+interface NetworkEdge {
+  x1: number; y1: number;
+  x2: number; y2: number;
+}
+
+function buildNodeNetwork(w: number, h: number): { nodes: NetworkNode[]; edges: NetworkEdge[] } {
+  const cx = w / 2;
+  const cy = h / 2;
+  const maxR = Math.max(w, h) * 0.62;
+  const isMob = w < 768;
+
+  const ringDef = isMob
+    ? [
+        { count: 6,  frac: 0.06 },
+        { count: 9,  frac: 0.14 },
+        { count: 12, frac: 0.26 },
+        { count: 15, frac: 0.38 },
+        { count: 18, frac: 0.52 },
+        { count: 22, frac: 0.66 },
+        { count: 26, frac: 0.82 },
+      ]
+    : [
+        { count: 6,  frac: 0.05 },
+        { count: 8,  frac: 0.10 },
+        { count: 12, frac: 0.17 },
+        { count: 16, frac: 0.25 },
+        { count: 19, frac: 0.34 },
+        { count: 22, frac: 0.45 },
+        { count: 24, frac: 0.57 },
+        { count: 28, frac: 0.70 },
+      ];
+
+  const nodes: NetworkNode[] = [];
+  const ringStart: number[] = [];
+
+  ringDef.forEach((ring, ri) => {
+    ringStart.push(nodes.length);
+    const rotOffset = ri * 0.35;
+    for (let i = 0; i < ring.count; i++) {
+      const angle = (i / ring.count) * Math.PI * 2 - Math.PI / 2 + rotOffset;
+      const r = ring.frac * maxR;
+      nodes.push({
+        x: cx + Math.cos(angle) * r,
+        y: cy + Math.sin(angle) * r,
+        ring: ri,
+        r: ri <= 1 ? 2.5 : 3.5,
+        delay: Math.random() * 3,
+        duration: 2.5 + Math.random() * 1.5,
+      });
+    }
+  });
+
+  const edges: NetworkEdge[] = [];
+
+  // Within-ring connections
+  ringDef.forEach((ring, ri) => {
+    const base = ringStart[ri];
+    for (let i = 0; i < ring.count; i++) {
+      const a = nodes[base + i];
+      const b = nodes[base + (i + 1) % ring.count];
+      edges.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y });
+    }
+  });
+
+  // Between-ring connections (each node → 2 closest in next ring)
+  for (let ri = 0; ri < ringDef.length - 1; ri++) {
+    const countB = ringDef[ri + 1].count;
+    const baseA = ringStart[ri];
+    const baseB = ringStart[ri + 1];
+    for (let i = 0; i < ringDef[ri].count; i++) {
+      const nA = nodes[baseA + i];
+      const sorted = Array.from({ length: countB }, (_, j) => ({
+        j,
+        d: Math.hypot(nA.x - nodes[baseB + j].x, nA.y - nodes[baseB + j].y),
+      })).sort((a, b) => a.d - b.d);
+      [sorted[0].j, sorted[1].j].forEach(j => {
+        edges.push({ x1: nA.x, y1: nA.y, x2: nodes[baseB + j].x, y2: nodes[baseB + j].y });
+      });
+    }
+  }
+
+  return { nodes, edges };
+}
+
+function NodeNetwork() {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [dims, setDims] = useState(() => ({
+    w: typeof window !== 'undefined' ? window.innerWidth : 800,
+    h: typeof window !== 'undefined' ? window.innerHeight : 600,
+  }));
+
+  useLayoutEffect(() => {
+    const svg = svgRef.current;
+    const section = svg?.parentElement;
+    if (!section || !(section instanceof HTMLElement)) return;
+
+    const update = () => {
+      const r = section.getBoundingClientRect();
+      setDims({
+        w: Math.max(1, Math.round(r.width)),
+        h: Math.max(1, Math.round(r.height)),
+      });
+    };
+
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(section);
+    window.addEventListener('resize', update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', update);
+    };
+  }, []);
+
+  const net = useMemo(() => buildNodeNetwork(dims.w, dims.h), [dims.w, dims.h]);
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (svgRef.current) svgRef.current.style.transform = `translateY(${window.scrollY * 0.15}px)`;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const isMobile = dims.w < 768;
+  const cx = dims.w / 2;
+  const cy = dims.h / 2;
+  /* Larger gradient radius + earlier fade to white on mobile so mesh reaches top/bottom of hero */
+  const rGrad = Math.max(dims.w, dims.h) * (isMobile ? 0.85 : 0.72);
+
+  return (
+    <svg
+      ref={svgRef}
+      aria-hidden="true"
+      viewBox={`0 0 ${dims.w} ${dims.h}`}
+      preserveAspectRatio="none"
+      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, pointerEvents: 'none', willChange: 'transform', overflow: 'hidden' }}
+    >
+      <defs>
+        <radialGradient
+          id="heroNetFade"
+          gradientUnits="userSpaceOnUse"
+          cx={cx}
+          cy={cy}
+          r={rGrad}
         >
-          <Bell className="w-4 h-4 mr-2" />
-          Join the Waitlist
-        </Button>
-      </div>
-    </header>
+          <stop offset="0%"   stopColor="black" stopOpacity="1" />
+          <stop offset={isMobile ? '32%' : '38%'} stopColor="black" stopOpacity="0.92" />
+          <stop offset={isMobile ? '52%' : '58%'} stopColor="white" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="white" stopOpacity="1" />
+        </radialGradient>
+        <mask id="heroNetMask" maskUnits="userSpaceOnUse" x={0} y={0} width={dims.w} height={dims.h}>
+          <rect x={0} y={0} width={dims.w} height={dims.h} fill="url(#heroNetFade)" />
+        </mask>
+      </defs>
+      <g mask="url(#heroNetMask)">
+        {net.edges.map((e, i) => (
+          <line key={`e${i}`} x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2} stroke="#2FB7FF" strokeWidth="0.7" strokeOpacity="0.12" />
+        ))}
+        {net.nodes.map((n, i) => (
+          <circle
+            key={`n${i}`}
+            cx={n.x} cy={n.y} r={n.r}
+            fill="#2FB7FF"
+            fillOpacity="0.35"
+            style={{ animation: `nodePulse ${n.duration}s ease-in-out ${n.delay}s infinite` }}
+          />
+        ))}
+      </g>
+    </svg>
   );
 }
 
 function Hero({ onJoinWaitlistClick }: { onJoinWaitlistClick: () => void }) {
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-20 pb-16 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-radial from-primary/8 via-transparent to-transparent opacity-60" />
-      <div
-        className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full"
-        style={{
-          background: "radial-gradient(circle, rgba(47, 183, 255, 0.12) 0%, rgba(47, 183, 255, 0.04) 40%, transparent 70%)",
-        }}
-      />
-      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6 tracking-tight">
-          Your Personal Cloud.
-          <br />
-          <span className="text-primary text-glow">Your Data. Your Device.</span>
+    <section
+      className="flex flex-col justify-center overflow-hidden"
+      style={{ position: 'relative', minHeight: '100vh', background: '#000405' }}
+    >
+      <NodeNetwork />
+
+      <div className="relative z-10 max-w-3xl mx-auto px-6 w-full py-24 flex flex-col items-center text-center">
+
+        {/* Eyebrow */}
+        <p style={{ color: '#2FB7FF', fontSize: '11px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '14px' }}>
+          By creator, for creators — Private Beta · 31 spots remaining
+        </p>
+
+        {/* Headline */}
+        <h1 style={{ fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.1, marginBottom: '20px' }}>
+          <span style={{ color: '#FFFFFF', display: 'block' }}>Stop Uploading.</span>
+          <span style={{ color: '#2FB7FF', display: 'block' }} className="text-glow">Start Creating.</span>
         </h1>
-        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-2">
-        Share files directly from your system as a secure shared resource, enabling a fast, single-step transfer experience. Benefit from ultra-fast local transfers or seamless remote sharing through a public network tunnel.
 
+        {/* Subheadline */}
+        <p style={{ color: '#8B9CA3', fontSize: '16px', lineHeight: 1.7, maxWidth: '520px', marginBottom: '32px' }}>
+          Send footage to your editor the moment you stop recording. No upload. No wait. Your files never leave your system — until you choose to share them.
         </p>
-        <p className="text-sm text-muted-foreground/80 max-w-2xl mx-auto mb-4">
-          Built &amp; led by Vinay Shakyawar
-        </p>
-        
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <button className="glow-on-hover font-semibold" type="button" onClick={onJoinWaitlistClick}> <Bell className="w-4 h-4 mr-2" />
-        Join the Waitlist</button>
-        </div>
-        <p className="mt-4 text-sm text-muted-foreground">Fast. Private. Easy to use.</p>
-        <div className="mt-8 p-4 rounded-xl bg-primary/10 border border-primary/30 max-w-md mx-auto glow-primary">
-          <div className="flex items-center justify-center gap-2 text-primary">
-            <Sparkles className="w-5 h-5" />
-            <span className="font-semibold">
-              Join the waitlist now to lock in a 30-day free trial and 1 year of free updates for the first 1,000 beta users.
-            </span>
-          </div>
+
+        {/* CTA row */}
+        <div className="flex flex-row flex-wrap items-center justify-center gap-x-1 gap-y-2">
+          <button
+            onClick={onJoinWaitlistClick}
+            data-testid="button-get-early-access"
+            className="cta-btn shrink-0"
+            style={{ background: '#2FB7FF', color: '#000405', fontWeight: 700, fontSize: '14px', padding: '12px 28px', borderRadius: '99px' }}
+          >
+            Claim Your Spot
+          </button>
+          <span style={{ color: '#3C5056', fontSize: '13px', padding: '0 4px' }}>·</span>
+          <a
+            href="#how-it-works"
+            className="hover:text-white transition-colors duration-150"
+            style={{ color: '#8B9CA3', fontSize: '13px', textDecoration: 'none', whiteSpace: 'nowrap' }}
+          >
+            See how it works ↓
+          </a>
         </div>
 
-        {/* App Screenshot with fade effect */}
-        <div className="mt-16 relative max-w-5xl mx-auto">
-          <div className="relative rounded-xl overflow-hidden border border-[#001C25] shadow-2xl">
-            <img 
-              src="/app-screenshot.png" 
-              alt="JoinCloud Application Interface" 
-              className="w-full h-auto"
-            />
-            {/* Bottom fade overlay */}
-            <div 
-              className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
-              style={{
-                background: "linear-gradient(to bottom, transparent 0%, #000405 100%)"
-              }}
-            />
-          </div>
+        {/* Social proof */}
+        <div className="flex items-center justify-center gap-2 flex-wrap" style={{ marginTop: '16px' }}>
+          <span style={{ color: '#3C5056', fontSize: '12px' }}>
+            50 creators in private beta · Launching April 12, 2026
+          </span>
         </div>
       </div>
     </section>
   );
 }
 
-function CoreBenefits() {
-  const benefits = [
+function ProblemSection() {
+  const floatingCards: { label: string; icon: string; bg: string; top: string; left?: string; right?: string; rotate: string; delay: string; size: string }[] = [
+    // Row 1 — purple, lg, mirrored 5deg
+    { label: 'Done Shooting', icon: '🎬', bg: '#7C3AED', top: '4%',  left: '4%',  rotate: '-5deg', delay: '0s',   size: 'lg' },
+    { label: 'Changes 1',     icon: '📝', bg: '#7C3AED', top: '4%',  right: '4%', rotate: '5deg',  delay: '0.3s', size: 'lg' },
+    // Row 2 — teal, lg, mirrored 3deg
+    { label: 'Sharing with team', icon: '👥', bg: '#0E7490', top: '24%', left: '2%',  rotate: '3deg',  delay: '0.8s', size: 'lg' },
+    { label: 'Upload again...',   icon: '🔁', bg: '#0E7490', top: '24%', right: '2%', rotate: '-3deg', delay: '1.1s', size: 'lg' },
+    // Row 3 — dark red / dark red, md, mirrored 4deg
+    { label: 'Wasted upload time',  icon: '🕐', bg: '#7F1D1D', top: '46%', left: '3%',  rotate: '-4deg', delay: '1.6s', size: 'md' },
+    { label: 'Editing complete',    icon: '✂️', bg: '#7F1D1D', top: '46%', right: '3%', rotate: '4deg',  delay: '1.9s', size: 'md' },
+    // Row 4 — dark slate, sm, mirrored 3deg
+    { label: 'Waiting for upload...', icon: '⏳', bg: '#1E293B', top: '66%', left: '6%',  rotate: '3deg',  delay: '2.4s', size: 'sm' },
+    { label: 'Changes 2',            icon: '📝', bg: '#1E293B', top: '66%', right: '6%', rotate: '-3deg', delay: '2.7s', size: 'sm' },
+    // Row 5 — crimson, lg, mirrored 4deg
+    { label: 'FINAL_FINAL',  icon: '😤', bg: '#9F1239', top: '84%', left: '8%',  rotate: '4deg',  delay: '3.2s', size: 'lg' },
+    { label: 'Upload again!!', icon: '🔁', bg: '#9F1239', top: '84%', right: '8%', rotate: '-4deg', delay: '3.5s', size: 'lg' },
+  ];
+
+  return (
+    <section className="border-t border-[#001C25] bg-[#000405] px-5 py-16 md:py-24 overflow-hidden">
+      <style>{`
+        @keyframes problemFloat {
+          0%, 100% { transform: translate(0, 0) rotate(var(--r)); }
+          50% { transform: translate(0, -10px) rotate(var(--r)); }
+        }
+        .float-card {
+          animation: problemFloat 4s ease-in-out infinite;
+          animation-delay: var(--d);
+        }
+      `}</style>
+
+      {/* Mobile: stacked layout */}
+      <div className="md:hidden max-w-[400px] mx-auto">
+        <div className="text-center mb-8">
+          <span className="inline-block text-[10px] font-bold uppercase tracking-[0.18em] text-[#2FB7FF] bg-[#2FB7FF]/10 px-3 py-1 rounded-full mb-4">
+            Why this exists
+          </span>
+          <h2 className="text-[28px] font-extrabold tracking-[-0.03em] text-foreground leading-[1.15]">
+            Every creative knows this loop.
+          </h2>
+        </div>
+        <div className="flex flex-wrap gap-2 justify-center">
+          {floatingCards.map((card) => (
+            <div
+              key={card.label}
+              className="float-card rounded-xl px-3 py-2 flex items-center gap-2"
+              style={{ background: card.bg, '--r': card.rotate, '--d': card.delay } as React.CSSProperties}
+            >
+              <span className="text-base">{card.icon}</span>
+              <span className="text-white text-[12px] font-medium whitespace-nowrap">{card.label}</span>
+            </div>
+          ))}
+        </div>
+
+      </div>
+
+      {/* Desktop: floating cards around center title */}
+      <div className="hidden md:block max-w-[1100px] mx-auto relative" style={{ height: '520px' }}>
+        {/* Center title */}
+        <div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 bg-[#0A1214] border border-[#1A2E35] rounded-2xl px-10 py-12 text-center w-[340px]"
+          style={{ boxShadow: '0 0 80px rgba(47,183,255,0.06)' }}
+        >
+          <span className="inline-block text-[10px] font-bold uppercase tracking-[0.18em] text-[#2FB7FF] bg-[#2FB7FF]/10 px-3 py-1 rounded-full mb-4">
+            Why this exists
+          </span>
+          <h2 className="text-[32px] font-extrabold tracking-[-0.03em] text-foreground leading-[1.15]">
+            Every creative knows this loop.
+          </h2>
+          <p className="text-[#8B9CA3] text-[13px] leading-relaxed mt-3">
+            You create. Then the real work begins — not the creative kind.
+          </p>
+        </div>
+
+        {/* Floating cards */}
+        {floatingCards.map((card) => {
+          const padding = card.size === 'lg' ? 'px-5 py-3' : card.size === 'md' ? 'px-4 py-2.5' : 'px-3 py-2';
+          const textSize = card.size === 'lg' ? 'text-[14px]' : card.size === 'md' ? 'text-[13px]' : 'text-[12px]';
+          const iconSize = card.size === 'lg' ? 'text-xl' : 'text-base';
+          return (
+            <div
+              key={card.label}
+              className={`float-card absolute rounded-xl ${padding} flex items-center gap-2.5 cursor-default select-none`}
+              style={{
+                background: card.bg,
+                top: card.top,
+                ...(card.left ? { left: card.left } : {}),
+                ...(card.right ? { right: card.right } : {}),
+                '--r': card.rotate,
+                '--d': card.delay,
+                boxShadow: `0 8px 30px ${card.bg}44`,
+              } as React.CSSProperties}
+            >
+              <span className={iconSize}>{card.icon}</span>
+              <span className={`text-white font-semibold ${textSize} whitespace-nowrap`}>{card.label}</span>
+            </div>
+          );
+        })}
+      </div>
+
+    </section>
+  );
+}
+
+function OldVsJoinCloudSection() {
+  const oldSteps = [
+    'Upload & wait 1–10 hrs',
+    'Client downloads again',
+    'Multiple copies pile up',
+    'Upload again, wait again',
+    '"FINAL_FINAL" chaos',
+  ];
+  const jcSteps = [
+    'Add file — instant',
+    'Share link — one click',
+    'Browser preview, no download',
+    'Feedback & rework live',
+    'Client gets the final. Once.',
+  ];
+
+  return (
+    <section className="border-t border-[#001C25] bg-[#00080A] px-5 py-16 md:py-28 overflow-hidden">
+      <div className="max-w-[1100px] mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12 md:mb-16">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#2FB7FF] mb-2">The shift</p>
+          <h2 className="text-[clamp(28px,4vw,40px)] font-bold tracking-[-0.02em] text-foreground mb-3">
+            Same pattern. Now optimized.
+          </h2>
+          <p className="text-[#8B9CA3] text-[15px] leading-relaxed max-w-[480px] mx-auto">
+            We didn&apos;t reinvent how creative work happens. We removed everything that slows it down.
+          </p>
+        </div>
+
+        {/* Mobile: VS battle timeline */}
+        <div className="md:hidden max-w-[400px] mx-auto">
+          {/* Column headers */}
+          <div className="grid grid-cols-[1fr_32px_1fr] items-center mb-4">
+            <p className="text-[10px] font-bold text-[#EF4444] uppercase tracking-wider text-center">Old Way</p>
+            <div />
+            <p className="text-[10px] font-bold text-[#2FB7FF] uppercase tracking-wider text-center">JoinCloud</p>
+          </div>
+
+          {/* Timeline rows */}
+          <div className="relative">
+            {/* Center glowing line */}
+            <div className="absolute left-1/2 top-0 bottom-0 -translate-x-1/2 w-[2px]" style={{ background: 'linear-gradient(180deg, #EF444466, #2FB7FF, #2FB7FF66)' }} />
+
+            <div className="flex flex-col gap-3">
+              {oldSteps.map((oldStep, i) => (
+                <div key={`vs-${i}`} className="grid grid-cols-[1fr_32px_1fr] items-center gap-0">
+                  {/* Old way (left) */}
+                  <div className="bg-[#EF4444]/10 border border-[#EF4444]/20 rounded-lg px-3 py-2 text-right">
+                    <p className="text-[11px] text-[#FCA5A5] font-medium leading-snug">{oldStep}</p>
+                  </div>
+                  {/* Center dot */}
+                  <div className="flex items-center justify-center relative z-10">
+                    <div className="w-3 h-3 rounded-full bg-[#0A1214] border-2 border-[#2FB7FF]" style={{ boxShadow: '0 0 8px #2FB7FF66' }} />
+                  </div>
+                  {/* JoinCloud way (right) */}
+                  <div className="bg-[#2FB7FF]/10 border border-[#2FB7FF]/20 rounded-lg px-3 py-2">
+                    <p className="text-[11px] text-[#7DD3FC] font-medium leading-snug">{jcSteps[i]}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Bottom circle badge */}
+          <div className="flex justify-center mt-6">
+            <div
+              className="w-[90px] h-[90px] rounded-full flex flex-col items-center justify-center text-center"
+              style={{
+                background: 'radial-gradient(circle, #2FB7FF22 0%, transparent 70%)',
+                border: '1.5px solid rgba(47,183,255,0.3)',
+                boxShadow: '0 0 30px rgba(47,183,255,0.1)',
+              }}
+            >
+              <p className="text-[#2FB7FF] font-bold text-[8px] uppercase tracking-[0.12em] leading-tight">Creative</p>
+              <p className="text-[#2FB7FF] font-bold text-[8px] uppercase tracking-[0.12em] leading-tight">Workflow</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop: radial mind-map */}
+        <div className="hidden md:block relative" style={{ height: '480px' }}>
+          {/* SVG connector lines */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
+            {/* Left branches */}
+            {oldSteps.map((_, i) => {
+              const cy = 80 + i * 80;
+              return <line key={`lo-${i}`} x1="50%" y1="50%" x2="22%" y2={cy} stroke="#EF4444" strokeWidth="1" strokeOpacity="0.25" />;
+            })}
+            {/* Right branches */}
+            {jcSteps.map((_, i) => {
+              const cy = 80 + i * 80;
+              return <line key={`lr-${i}`} x1="50%" y1="50%" x2="78%" y2={cy} stroke="#2FB7FF" strokeWidth="1" strokeOpacity="0.25" />;
+            })}
+          </svg>
+
+          {/* Center circle */}
+          <div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[200px] h-[200px] rounded-full flex flex-col items-center justify-center text-center"
+            style={{
+              background: 'radial-gradient(circle, #2FB7FF22 0%, #2FB7FF08 70%, transparent 100%)',
+              border: '1.5px solid rgba(47,183,255,0.3)',
+              boxShadow: '0 0 60px rgba(47,183,255,0.1)',
+            }}
+          >
+            <p className="text-[#2FB7FF] font-bold text-[11px] uppercase tracking-[0.15em] mb-1">The Creative</p>
+            <p className="text-[#2FB7FF] font-bold text-[11px] uppercase tracking-[0.15em]">Workflow</p>
+          </div>
+
+          {/* Left label */}
+          <div className="absolute left-[8%] top-0 z-10">
+            <p className="text-[11px] font-bold text-[#EF4444] uppercase tracking-wider">Old Way</p>
+          </div>
+
+          {/* Right label */}
+          <div className="absolute right-[8%] top-0 z-10">
+            <p className="text-[11px] font-bold text-[#2FB7FF] uppercase tracking-wider text-right">JoinCloud Way</p>
+          </div>
+
+          {/* Left nodes (Old Way) */}
+          {oldSteps.map((step, i) => {
+            const top = 60 + i * 80;
+            return (
+              <div
+                key={`old-${i}`}
+                className="absolute z-10 bg-[#EF4444]/10 border border-[#EF4444]/20 rounded-xl px-4 py-2 max-w-[200px] text-center"
+                style={{ top: `${top}px`, left: '4%', right: 'auto' }}
+              >
+                <p className="text-[12px] text-[#FCA5A5] font-medium leading-snug">{step}</p>
+              </div>
+            );
+          })}
+
+          {/* Right nodes (JoinCloud Way) */}
+          {jcSteps.map((step, i) => {
+            const top = 60 + i * 80;
+            return (
+              <div
+                key={`jc-${i}`}
+                className="absolute z-10 bg-[#2FB7FF]/10 border border-[#2FB7FF]/20 rounded-xl px-4 py-2 max-w-[200px] text-center"
+                style={{ top: `${top}px`, right: '4%', left: 'auto' }}
+              >
+                <p className="text-[12px] text-[#7DD3FC] font-medium leading-snug">{step}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function OurStorySection() {
+  const highlights = [
     {
-      icon: Zap,
-      title: "Fast",
-      description: "Sharing files directly reduces friction and increases productivity.",
+      icon: (
+        <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="#2FB7FF" strokeWidth={1.5}>
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+        </svg>
+      ),
+      title: 'Share files directly',
+      desc: 'From your system to anyone. No upload to third-party servers.',
+      color: '#2FB7FF',
     },
     {
-      icon: Shield,
-      title: "Private",
-      description: "No one can access until shared and your files never touch third party servers.",
+      icon: (
+        <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="#7C3AED" strokeWidth={1.5}>
+          <circle cx="12" cy="12" r="10" /><polygon points="10 8 16 12 10 16 10 8" />
+        </svg>
+      ),
+      title: 'View before download',
+      desc: 'Recipients preview in-browser. Download only when it\'s truly final.',
+      color: '#7C3AED',
     },
     {
-      icon: HardDrive,
-      title: "Easy",
-      description: "Manage your files, choose what to share, and revoke access anytime.",
+      icon: (
+        <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="#0E7490" strokeWidth={1.5}>
+          <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+        </svg>
+      ),
+      title: 'Save time, ship faster',
+      desc: 'Zero upload wait. Your productivity goes where your creativity goes.',
+      color: '#0E7490',
     },
   ];
 
   return (
-    <section className="py-24 px-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Save time with JoinCloud?
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            JoinCloud uses a storage space in your device as a local personal cloud. Share or manage files in a single place in your control, collaborate with your team, and preview image and video content on the go on when shared before downloading.
-          </p>
+    <section className="border-t border-[#001C25] bg-[#000405] px-5 py-16 md:py-24 overflow-hidden">
+      <div className="max-w-[960px] mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#2FB7FF] mb-2">Our story</p>
+          <p className="text-sm text-[#8B9CA3] mb-2">Why we built JoinCloud</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-6">
-          {benefits.map((benefit, index) => (
-            <Card key={index} className="bg-[#00080A] border-[#001C25] hover:border-primary/30 transition-all duration-200" data-testid={`benefit-${index + 1}`}>
-              <CardContent className="p-8 text-center">
-                <div className="w-14 h-14 rounded-xl bg-primary/15 border border-primary/20 flex items-center justify-center mb-6 mx-auto">
-                  <benefit.icon className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3">{benefit.title}</h3>
-                <p className="text-muted-foreground">{benefit.description}</p>
-              </CardContent>
-            </Card>
+
+        {/* Three highlight cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-12">
+          {highlights.map((h) => (
+            <div
+              key={h.title}
+              className="relative rounded-2xl p-6 text-center group hover:scale-[1.02] transition-transform duration-200"
+              style={{
+                background: `${h.color}08`,
+                border: `1px solid ${h.color}22`,
+              }}
+            >
+              {/* Glow dot */}
+              <div
+                className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full"
+                style={{ background: h.color, boxShadow: `0 0 16px ${h.color}88` }}
+              />
+              <div className="flex justify-center mb-4 mt-2">{h.icon}</div>
+              <h3 className="text-foreground font-bold text-[16px] mb-2">{h.title}</h3>
+              <p className="text-[#8B9CA3] text-[13px] leading-relaxed">{h.desc}</p>
+            </div>
           ))}
         </div>
+
+        {/* Story text — compact */}
+        <div className="max-w-[680px] mx-auto text-[14px] text-[#8B9CA3] leading-[1.85] space-y-4 mb-10">
+          <p>
+            At Arevei, while managing content for brands, we kept running into the same wall — uploading files, waiting, sharing, re-uploading. The biggest time-waster in creative work is content review.
+          </p>
+          <p>
+            So we asked: <span className="text-foreground font-medium">what if your own system was the cloud?</span> No third-party server. No waiting. Just your machine, sharing directly — to anyone, anywhere, instantly.
+          </p>
+        </div>
+
+        {/* Founder quote — standout card */}
+        <div
+          className="max-w-[540px] mx-auto rounded-2xl p-6 md:p-8 text-center relative"
+          style={{
+            background: 'linear-gradient(135deg, rgba(47,183,255,0.06) 0%, rgba(124,58,237,0.06) 100%)',
+            border: '1px solid rgba(47,183,255,0.15)',
+          }}
+        >
+          <div
+            className="w-10 h-10 rounded-full mx-auto mb-4 flex items-center justify-center text-lg"
+            style={{ background: 'rgba(47,183,255,0.12)', border: '1px solid rgba(47,183,255,0.25)' }}
+          >
+            VS
+          </div>
+          <p className="text-[16px] md:text-[18px] text-foreground/90 italic leading-relaxed font-light">
+            &quot;I believe your data should be in your control. Because that is your right.&quot;
+          </p>
+          <p className="mt-4 text-[13px] text-[#2FB7FF] font-medium">Vinay Shakyawar</p>
+          <p className="text-[11px] text-[#8B9CA3]">Founder, JoinCloud</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function WhatJoinCloudIs() {
+  const pillars = [
+    {
+      icon: Zap,
+      title: "Fast",
+      description:
+        "Files shared directly from your system. No third-party bottleneck. Large files move at local network speed — or instantly across any network.",
+    },
+    {
+      icon: Shield,
+      title: "Private",
+      description:
+        "Your files never touch a third-party server. Nothing is accessible until you choose to share it. System files stay completely isolated from JoinCloud.",
+    },
+    {
+      icon: HardDrive,
+      title: "Easy",
+      description:
+        "Manage files, create share links, revoke access — all from one place. No technical setup. No account required for recipients.",
+    },
+  ];
+
+  return (
+    <section className="border-t border-[#001C25] bg-[#00080A] py-24 px-6">
+      <div className="max-w-3xl mx-auto text-center mb-14">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary mb-2">The product</p>
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+          Turn your system storage into a personal cloud.
+        </h2>
+        <p className="text-muted-foreground text-lg leading-relaxed">
+          JoinCloud uses the storage space on your own device as a local personal cloud. Add files once. Share from one place. Collaborate with your team. Preview image and video content in the browser before downloading — on any device, any network, anywhere.
+        </p>
+      </div>
+      <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
+        {pillars.map((pillar, index) => {
+          const Icon = pillar.icon;
+          return (
+            <Card key={index} className="bg-[#000405] border-[#001C25] hover:border-primary/30 transition-all duration-200" data-testid={`pillar-${index + 1}`}>
+              <CardContent className="p-8 text-center">
+                <div className="w-14 h-14 rounded-xl bg-primary/15 border border-primary/20 flex items-center justify-center mb-6 mx-auto">
+                  <Icon className="w-7 h-7 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-3">{pillar.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{pillar.description}</p>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </section>
   );
 }
 
 function Features() {
-  const availableFeatures = [
-    {
-      icon: Users,
-      title: "Team Collaboration",
-      description: "Shared workspace with nearby JoinCloud users, with quick chat based discussion on project files.",
-    },
-    {
-      icon: Eye,
-      title: "4K Preview",
-      description: "Share high resolution files up to 4K and let recipients preview them directly in their browser. No download required.",
-    },
-    {
-      icon: Smartphone,
-      title: "Multi Device Access",
-      description: "Open your cloud on any device. Access your files from smartphones, tablets, laptops, or any browser connected to your network.",
-    },
-    {
-      icon: FolderOpen,
-      title: "Built In File Manager",
-      description: "Organize, upload, and manage all your files directly within JoinCloud. Keep your cloud storage clean and structured.",
-    },
-    {
-      icon: QrCode,
-      title: "QR Code Sharing",
-      description: "Generate QR codes for instant access to files or your entire cloud. Perfect for quick sharing with nearby devices.",
-    },
-    {
-      icon: Link2,
-      title: "No Limits on File Size",
-      description: "Share files without worrying about file size limits.",
-    },
-    {
-      icon: UserX,
-      title: "No Signup Required",
-      description: "Download and start using immediately. Free trial, no credit card required.",
-    },
-    {
-      icon: Wifi,
-      title: "Fast Turnaround",
-      description: "Optimized for local network performance, transfer large files peer to peer. No need to transfer to cloud or external drive.",
-    },
-    {
-      icon: Lock,
-      title: "Private and Secure",
-      description: "Your files never touch third party servers. Only added files in the joincloud can be shared with others. System files are isolated from joincloud.",
-    },
-  ];
-
-  const comingSoonFeatures = [
-    {
-      icon: Globe,
-      title: "Global Sharing",
-      description: "Share files directly with anyone, anywhere in the world, with no need to upload to a cloud server.",
-    },
-    {
-      icon: Monitor,
-      title: "Remote Cloud Access",
-      description: "Control your personal cloud from any browser, anywhere.",
-    },
+  const items: { icon: typeof Eye; title: string; description: string }[] = [
+    { icon: Eye, title: "4K Preview", description: "Recipients preview high-res video and images directly in the browser. No download required." },
+    { icon: Link2, title: "Link Sharing", description: "Generate a shareable link or QR code for any file or folder. One click. Done." },
+    { icon: Smartphone, title: "Multi-Device Access", description: "Open your cloud on any device — phone, tablet, laptop, any browser." },
+    { icon: FolderOpen, title: "Built-in File Manager", description: "Organize and manage everything within JoinCloud. Clean and structured." },
+    { icon: Monitor, title: "Device Management", description: "Approve devices, see connection history, revoke access instantly." },
+    { icon: Share2, title: "Global Sharing", description: "Share with anyone, anywhere. No server upload required." },
+    { icon: Globe, title: "Remote Cloud Access", description: "Control your personal cloud from any browser, anywhere." },
+    { icon: Zap, title: "No File Size Limits", description: "Share without worrying about size." },
+    { icon: UserX, title: "No Signup for Recipients", description: "They just open the link and preview." },
+    { icon: QrCode, title: "QR Code Sharing", description: "Instant access. Perfect for nearby devices." },
   ];
 
   return (
-    <section id="features" className="py-24 px-6 bg-[#00080A]">
+    <section id="features" className="py-24 px-6 bg-[#000405] border-t border-[#001C25]">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-14">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary mb-2">v0.3.4 Beta — Available now</p>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            v0.3.4 Beta Features
+            Everything you need. Nothing you don&apos;t.
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            We care about your privacy and time, and we are happy to share that we are launching soon.
-          </p>
         </div>
-
-        <div className="mb-16">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-8 h-8 rounded-full bg-[#22C55E]/20 border border-[#22C55E]/30 flex items-center justify-center">
-              <CheckCircle className="w-5 h-5 text-[#22C55E]" />
-            </div>
-            <h3 className="text-2xl font-bold text-foreground">Available Now</h3>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {availableFeatures.map((feature, index) => (
-              <Card key={index} className="bg-[#000405] border-[#001C25] hover:border-primary/30 transition-all duration-200" data-testid={`feature-available-${index + 1}`}>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {items.map((feature, index) => {
+            const Icon = feature.icon;
+            return (
+              <Card key={index} className="bg-[#00080A] border-[#001C25] hover:border-primary/30 transition-all duration-200" data-testid={`feature-${index + 1}`}>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/20 flex items-center justify-center shrink-0">
-                      <feature.icon className="w-6 h-6 text-primary" />
+                      <Icon className="w-6 h-6 text-primary" />
                     </div>
                     <div>
                       <h4 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h4>
-                      <p className="text-muted-foreground text-sm">{feature.description}</p>
+                      <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <div className="flex items-center gap-3 mb-8">
-            {/* <div className="w-8 h-8 rounded-full bg-[#F59E0B]/20 border border-[#F59E0B]/30 flex items-center justify-center">
-              <Clock className="w-5 h-5 text-[#F59E0B]" />
-            </div> */}
-            {/* <h3 className="text-2xl font-bold text-foreground">Coming Soon</h3> */}
-          </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            {comingSoonFeatures.map((feature, index) => (
-              <Card key={index} className="bg-[#000405] border-[#001C25] border-dashed opacity-80" data-testid={`feature-coming-${index + 1}`}>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/20 flex items-center justify-center shrink-0">
-                      <feature.icon className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <h4 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h4>
-                      <p className="text-muted-foreground text-sm">{feature.description}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function AppShowcase() {
-  const showcaseItems = [
-    {
-      image: "/screenshot-devices.png",
-      title: "Device Management",
-      subtitle: "Control Access to Your Cloud",
-      description: "Approve and manage devices that connect to your JoinCloud. See connection history, revoke access instantly, and keep your files secure with complete visibility over who can access your cloud.",
-    },
-    {
-      image: "/screenshot-teams.png",
-      title: "Team Spaces",
-      subtitle: "Collaborate in Real Time",
-      description: "Create dedicated spaces for your team. Share files, send messages, and collaborate instantly with peers on your local network. Perfect for offices, studios, and creative teams.",
-    },
-    {
-      image: "/screenshot-shares.png",
-      title: "Link Sharing",
-      subtitle: "Share with One Click",
-      description: "Generate shareable links for any file or folder. Copy the link, scan the QR code, or share directly. Recipients can preview and download without installing anything.",
-    },
-    {
-      image: "/screenshot-network.png",
-      title: "Network Discovery",
-      subtitle: "Connect Seamlessly",
-      description: "Automatically discover nearby JoinCloud users on your network. Connect manually via IP address or let mDNS find peers for you. See all connected devices at a glance.",
-    },
-  ];
-
-  return (
-    <section className="py-24 px-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            See JoinCloud in Action
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            A powerful yet intuitive interface designed for seamless file sharing and collaboration.
-          </p>
-        </div>
-        
-        <div className="space-y-24">
-          {showcaseItems.map((item, index) => (
-            <div 
-              key={index}
-              className={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-8 lg:gap-16`}
-            >
-              <div className="flex-1 w-full">
-                <div className="relative rounded-xl overflow-hidden border border-[#001C25] shadow-2xl">
-                  <img 
-                    src={item.image} 
-                    alt={item.title}
-                    className="w-full h-auto"
-                  />
-                  <div 
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                      background: "linear-gradient(135deg, rgba(47, 183, 255, 0.05) 0%, transparent 50%)"
-                    }}
-                  />
-                </div>
-              </div>
-              
-              <div className="flex-1 text-center lg:text-left">
-                <span className="text-primary text-sm font-semibold tracking-wider uppercase mb-2 block">
-                  {item.subtitle}
-                </span>
-                <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-                  {item.title}
-                </h3>
-                <p className="text-muted-foreground text-lg leading-relaxed">
-                  {item.description}
-                </p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
@@ -548,51 +964,66 @@ function AppShowcase() {
 
 function HowItWorks() {
   const steps = [
-    {
-      icon: Download,
-      title: "Install JoinCloud",
-      description: "Download and launch in seconds.",
-    },
-    {
-      icon: Folder,
-      title: "Choose Your Files",
-      description: "Select any file and upload.",
-    },
-    {
-      icon: Link2,
-      title: "Create Share",
-      description: "Instantly generate a shareable link or QR code.",
-    },
-    {
-      icon: Globe,
-      title: "Access Instantly",
-      description: "Open the link on any device to preview and download.",
-    },
+    { icon: Download, title: "Install JoinCloud", description: "Download and launch in seconds. No complex setup." },
+    { icon: Folder, title: "Add your files", description: "Select any file. It stays on your system — add is instant." },
+    { icon: Link2, title: "Create a share link", description: "Generate a shareable link or QR code in one click." },
+    { icon: Globe, title: "Access anywhere", description: "Open on any device. Preview in browser. Download only the final." },
   ];
 
   return (
-    <section id="how-it-works" className="py-24 px-6">
+    <section id="how-it-works" className="py-24 px-6 bg-[#00080A] border-t border-[#001C25]">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-14">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary mb-2">Setup</p>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            How It Works
+            Install. Add. Share. Done.
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            From install to sharing, Easy and Simple. No Tech Complexity. Made for You.
-          </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {steps.map((step, index) => (
-            <Card key={index} className="bg-[#00080A] border-[#001C25] hover:border-primary/30 transition-all duration-200" data-testid={`card-step-${index + 1}`}>
-              <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/20 flex items-center justify-center mb-4 mx-auto">
-                  <step.icon className="w-6 h-6 text-primary" />
-                </div>
-                <span className="text-3xl font-bold text-primary mb-2 block">{index + 1}</span>
-                <h3 className="text-base font-semibold text-foreground mb-2">{step.title}</h3>
-                <p className="text-muted-foreground text-sm">{step.description}</p>
-              </CardContent>
-            </Card>
+          {steps.map((step, index) => {
+            const Icon = step.icon;
+            return (
+              <Card key={index} className="bg-[#000405] border-[#001C25] hover:border-primary/30 transition-all duration-200" data-testid={`card-step-${index + 1}`}>
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/20 flex items-center justify-center mb-4 mx-auto">
+                    <Icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <span className="text-3xl font-bold text-primary mb-2 block">{index + 1}</span>
+                  <h3 className="text-base font-semibold text-foreground mb-2">{step.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{step.description}</p>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function WhoItsFor() {
+  const audience = [
+    "Video editors moving files between laptop, PC, mobile, and tablet",
+    "Creators and production teams who share large files daily",
+    "Anyone who reviews and revises files repeatedly before a final download",
+    "Studios and offices who want real-time collaboration without cloud dependency",
+    "Research or privacy-focused organizations that can't route files through external servers",
+    "Anyone who wants one home for all their files — on their own network, under their own control",
+  ];
+
+  return (
+    <section className="py-24 px-6 bg-[#000405] border-t border-[#001C25]">
+      <div className="max-w-4xl mx-auto text-center">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary mb-2">Built for</p>
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10">
+          If you move large files for work, this is for you.
+        </h2>
+        <div className="space-y-4 max-w-2xl mx-auto">
+          {audience.map((line, index) => (
+            <div key={index} className="flex items-start gap-3 text-left p-4 rounded-xl border border-[#001C25] bg-[#00080A] hover:border-primary/30 transition-colors">
+              <div className="w-2 h-2 rounded-full bg-primary shrink-0 mt-2" />
+              <p className="text-base text-muted-foreground leading-relaxed">{line}</p>
+            </div>
           ))}
         </div>
       </div>
@@ -600,31 +1031,45 @@ function HowItWorks() {
   );
 }
 
-function DesignPhilosophy() {
-  const principles = [
-    "Video editors who need to share files between devices like a laptop, PC, mobile, or tablet.",
-    "Creators or production teams who frequently move large files between devices.",
-    "People who want a home cloud, where all files can be accessed from one place on their own network.",
-    "Anyone who often edits or updates files, and wants to preview them before downloading again.",
-    "Research organizations that prefer not to send files through external cloud servers.",
-    "Privacy-focused organizations that want to keep their files safe by storing and sharing them locally.",
-    "People sharing travel or trip photos, who want to preview images first before downloading them.",
+function ComparisonTable() {
+  const rows = [
+    { label: "Transfer time (1–5 GB)", old: "1–10 hours", jc: "Seconds" },
+    { label: "Review without downloading", old: "Not possible", jc: "Browser preview, always" },
+    { label: "File copies at end of project", old: "Multiple, both sides", jc: "One — the final" },
+    { label: '"Which version is current?"', old: "Nobody knows", jc: "The link always is" },
+    { label: "Feedback process", old: "Email, WhatsApp, guesswork", jc: "Directly on the file" },
+    { label: "Files on third-party servers", old: "Always", jc: "Never" },
+    { label: "Recipient needs an account", old: "Sometimes", jc: "Never" },
   ];
 
   return (
-    <section className="py-24 px-6 bg-[#00080A]">
-      <div className="max-w-4xl mx-auto text-center">
-       
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-        Who can use this
-        </h2>
-        <div className="space-y-4 max-w-2xl mx-auto">
-          {principles.map((principle, index) => (
-            <div key={index} className="flex items-center gap-3 text-left p-4 rounded-xl border border-[#001C25] bg-[#000405] hover:border-primary/30 transition-colors">
-              <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
-              <p className="text-lg text-muted-foreground">{principle}</p>
-            </div>
-          ))}
+    <section id="pricing" className="py-24 px-6 bg-[#00080A] border-t border-[#001C25]">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-10">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary mb-2">Side by side</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+            Old way vs. JoinCloud.
+          </h2>
+        </div>
+        <div className="overflow-x-auto rounded-xl border border-[#001C25] bg-[#000405]">
+          <table className="w-full text-sm text-left min-w-[520px]">
+            <thead>
+              <tr className="border-b border-[#001C25]">
+                <th className="p-4 font-semibold text-muted-foreground w-[40%]" />
+                <th className="p-4 font-semibold text-foreground">Old Way</th>
+                <th className="p-4 font-semibold text-primary">JoinCloud</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.label} className="border-b border-[#001C25] last:border-0">
+                  <td className="p-4 text-muted-foreground">{row.label}</td>
+                  <td className="p-4 text-muted-foreground">{row.old}</td>
+                  <td className="p-4 text-foreground">{row.jc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -706,11 +1151,11 @@ function FeedbackSection() {
     <section id="feedback" className="py-24 px-6">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Help Us Build the Future
-          </h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+          Help us build the future.
+        </h2>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-            Your feedback shapes JoinCloud. Share your thoughts and ideas with us. No account needed.
+            Your feedback shapes JoinCloud. Share your thoughts, ideas, or suggestions. No account needed.
           </p>
         </div>
 
@@ -862,21 +1307,18 @@ function WaitlistSection({ waitlistRef }: { waitlistRef: React.RefObject<HTMLDiv
   };
 
   return (
-    <section id="waitlist" className="py-24 px-6" ref={waitlistRef as React.Ref<HTMLElement>}>
+    <section id="waitlist" className="py-24 px-6 border-t border-[#001C25]" ref={waitlistRef as React.Ref<HTMLElement>}>
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-12">
-          <div className="w-16 h-16 rounded-2xl bg-primary/15 border border-primary/20 flex items-center justify-center mx-auto mb-6">
-            <Bell className="w-8 h-8 text-primary" />
-          </div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary mb-2">Early access</p>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-          Join us to create something better for the future. Get notified when JoinCloud launches. 
-
+            Be one of the first 1,000.
           </h2>
-          <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-          Join the waitlist now to lock in a 30-day free trial and 1 year free updates. For our early 1000 beta users.  
+          <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
+            JoinCloud launches April 12, 2026. Join the waitlist now to lock in a 30-day free trial and one year of free updates — for our first 1,000 beta users only.
           </p>
-          <p className="mt-2 text-sm text-muted-foreground/80">
-          Launch Date: 12th April 2026.
+          <p className="mt-3 text-sm text-muted-foreground">
+            31 spots remaining in private beta.
           </p>
         </div>
 
@@ -936,19 +1378,16 @@ function WaitlistSection({ waitlistRef }: { waitlistRef: React.RefObject<HTMLDiv
               <Button
                 type="submit"
                 size="lg"
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+                className="cta-btn w-full font-semibold"
                 disabled={!name.trim() || !email.trim() || !profession || waitlistMutation.isPending}
                 data-testid="button-submit-waitlist"
+                style={{ background: '#2FB7FF', color: '#000405', borderRadius: '99px' }}
               >
-                {waitlistMutation.isPending ? (
-                  "Joining..."
-                ) : (
-                  <>
-                    <Bell className="w-4 h-4 mr-2" />
-                    Join the Waitlist
-                  </>
-                )}
+                {waitlistMutation.isPending ? "Joining..." : "Claim Your Spot"}
               </Button>
+              <p className="text-center text-[11px] text-muted-foreground pt-2">
+                No credit card required. Free trial, no strings attached.
+              </p>
             </form>
           </CardContent>
         </Card>
@@ -965,10 +1404,10 @@ function SupportSection() {
           <Headphones className="w-8 h-8 text-primary" />
         </div>
         <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-          Need Help?
+          Need help?
         </h2>
         <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
-          If you face any issues during installation or runtime, we're here to help. Reach out to us through any of the channels below.
+          Reach us by email, WhatsApp, or in-app chat.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
           <a
@@ -1012,66 +1451,23 @@ function SupportSection() {
   );
 }
 
-function DownloadSection({ onJoinWaitlistClick }: { onJoinWaitlistClick: () => void }) {
-  return (
-    <section className="py-24 px-6 bg-[#00080A]">
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-          Be First to JoinCloud
-        </h2>
-        <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
-          Join the waitlist and we'll email you as soon as JoinCloud is ready for your devices.
-        </p>
-        <Button
-          size="lg"
-          className="text-base px-10 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-          data-testid="button-join-waitlist-download-section"
-          onClick={onJoinWaitlistClick}
-        >
-          <Bell className="w-5 h-5 mr-2" />
-          Join the Waitlist
-        </Button>
-      </div>
-    </section>
-  );
-}
-
 function Footer() {
   return (
     <footer className="py-12 px-6 bg-[#000A0D] border-t border-[#001C25]">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <img src={joincloudLogo} alt="JoinCloud" className="h-6 w-auto object-contain" />
-            <span className="text-lg font-bold text-foreground">JoinCloud</span>
-          </div>
-          <nav className="flex flex-wrap items-center justify-center gap-6 text-sm">
-            <a
-              href="/privacy"
-              className="text-muted-foreground hover:text-primary transition-colors duration-150"
-              data-testid="link-privacy"
-            >
-              Privacy Policy
-            </a>
-            <a
-              href="/terms"
-              className="text-muted-foreground hover:text-primary transition-colors duration-150"
-              data-testid="link-terms"
-            >
-              Terms
-            </a>
-            <a
-              href="#"
-              className="text-muted-foreground hover:text-primary transition-colors duration-150"
-              data-testid="link-support"
-            >
-              Support
-            </a>
-          </nav>
-          <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} JoinCloud. All rights reserved.
-          </p>
-        </div>
+      <div className="max-w-6xl mx-auto flex flex-col items-center text-center gap-6">
+        <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed">
+          © 2026 JoinCloud by Vinay Shakyawar | Marketing Partner{' '}
+          <a href="https://arevei.com" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">Arevei.com</a>
+          {' · '}
+          <a href="/privacy" className="hover:text-primary transition-colors" data-testid="link-privacy">Privacy Policy</a>
+          {' · '}
+          <a href="/terms" className="hover:text-primary transition-colors" data-testid="link-terms">Terms</a>
+          {' · '}
+          <a href="mailto:info@joincloud.in" className="hover:text-primary transition-colors" data-testid="link-support">Support</a>
+        </p>
+        <p className="text-xs text-muted-foreground/80">
+          Your files. Your cloud. Your control.
+        </p>
       </div>
     </footer>
   );
@@ -1092,20 +1488,21 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-background grain-bg">
-      <FluidCursor />
+    <div className="min-h-screen bg-background">
       <Header onJoinWaitlistClick={handleJoinWaitlistClick} />
       <main>
         <Hero onJoinWaitlistClick={handleJoinWaitlistClick} />
-        <CoreBenefits />
+        <ProblemSection />
+        <OldVsJoinCloudSection />
+        <OurStorySection />
+        <WhatJoinCloudIs />
         <Features />
-        <AppShowcase />
+        <WhoItsFor />
         <HowItWorks />
-        <DesignPhilosophy />
-        <FeedbackSection />
+        <ComparisonTable />
         <WaitlistSection waitlistRef={waitlistRef} />
+        <FeedbackSection />
         <SupportSection />
-        <DownloadSection onJoinWaitlistClick={handleJoinWaitlistClick} />
       </main>
       <Footer />
     </div>
