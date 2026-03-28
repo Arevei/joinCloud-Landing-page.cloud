@@ -290,6 +290,7 @@ function Header({ onJoinWaitlistClick }: { onJoinWaitlistClick: () => void }) {
               { label: 'Features',    href: '#features',    testId: 'link-features' },
               { label: 'How It Works',href: '#how-it-works',testId: 'link-how-it-works' },
               { label: 'Product',     href: '#product',     testId: '' },
+              { label: 'Calculator',  href: '#calculator',  testId: 'link-calculator' },
               // { label: 'Blog',        href: '/blog',        testId: 'link-blog' },
             ].map((link) => (
               <a
@@ -1519,6 +1520,175 @@ function SupportSection() {
   );
 }
 
+/* ── Upload Waste Calculator ──── */
+function UploadWasteCalculator() {
+  const [hoursPerWeek, setHoursPerWeek] = useState('');
+  const [gbPerWeek, setGbPerWeek] = useState('');
+  const [hourlyRate, setHourlyRate] = useState('');
+  const [showResult, setShowResult] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  // Avg upload speed ~10 Mbps = ~1.25 MB/s => 1 GB ~ 13.3 min
+  const uploadMinutesPerGB = 13.3;
+  const weeksPerYear = 52;
+
+  const gbNum = parseFloat(gbPerWeek) || 0;
+  const rateNum = parseFloat(hourlyRate) || 0;
+
+  const totalMinutesPerYear = gbNum * uploadMinutesPerGB * weeksPerYear;
+  const totalHoursPerYear = totalMinutesPerYear / 60;
+  const totalDays = totalHoursPerYear / 8; // 8hr work days
+  const moneyCost = totalHoursPerYear * rateNum;
+
+  const canCalculate = gbNum > 0 && rateNum > 0;
+
+  const handleCalculate = () => {
+    if (canCalculate) setShowResult(true);
+  };
+
+  const shareText = `I've wasted ${totalDays.toFixed(1)} days and ${moneyCost >= 1000 ? (moneyCost / 1000).toFixed(1) + 'K' : moneyCost.toFixed(0)} this year watching upload bars. Check your score -> joincloud.cloud`;
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({ text: shareText, url: 'https://joincloud.cloud' });
+      } catch {}
+    } else {
+      await navigator.clipboard.writeText(shareText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  return (
+    <section id="calculator" className="border-t border-[#001C25] bg-[#000A0D] px-5 py-16 md:py-24">
+      <div className="max-w-3xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-10 md:mb-14">
+          <span className="inline-block text-[10px] font-bold uppercase tracking-[0.18em] text-[#2FB7FF] bg-[#2FB7FF]/10 px-3 py-1 rounded-full mb-4">
+            Upload Waste Calculator
+          </span>
+          <h2 className="text-[28px] md:text-[40px] font-extrabold tracking-[-0.03em] text-foreground leading-[1.15]">
+            How much of your life have you<br className="hidden md:block" /> lost to upload bars?
+          </h2>
+          <p className="text-[#8B9CA3] text-sm md:text-base mt-3 max-w-xl mx-auto">
+            Find out how much time and money you waste every year waiting for files to upload to cloud services.
+          </p>
+        </div>
+
+        {/* Calculator Card */}
+        <div
+          className="bg-[#0A1214] border border-[#1A2E35] rounded-2xl p-6 md:p-10"
+          style={{ boxShadow: '0 0 60px rgba(47,183,255,0.04)' }}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
+            {/* Input 1 */}
+            <div>
+              <label className="block text-[12px] font-medium text-[#8B9CA3] uppercase tracking-wide mb-2">
+                Hours you work / week
+              </label>
+              <input
+                type="number"
+                min="0"
+                placeholder="40"
+                value={hoursPerWeek}
+                onChange={(e) => { setHoursPerWeek(e.target.value); setShowResult(false); }}
+                className="w-full bg-[#06090B] border border-[#1A2E35] rounded-lg px-4 py-3 text-white text-lg focus:outline-none focus:border-[#2FB7FF] transition-colors placeholder:text-[#3A4F58]"
+              />
+            </div>
+            {/* Input 2 */}
+            <div>
+              <label className="block text-[12px] font-medium text-[#8B9CA3] uppercase tracking-wide mb-2">
+                GBs you upload / week
+              </label>
+              <input
+                type="number"
+                min="0"
+                placeholder="5"
+                value={gbPerWeek}
+                onChange={(e) => { setGbPerWeek(e.target.value); setShowResult(false); }}
+                className="w-full bg-[#06090B] border border-[#1A2E35] rounded-lg px-4 py-3 text-white text-lg focus:outline-none focus:border-[#2FB7FF] transition-colors placeholder:text-[#3A4F58]"
+              />
+            </div>
+            {/* Input 3 */}
+            <div>
+              <label className="block text-[12px] font-medium text-[#8B9CA3] uppercase tracking-wide mb-2">
+                Your hourly rate (INR)
+              </label>
+              <input
+                type="number"
+                min="0"
+                placeholder="500"
+                value={hourlyRate}
+                onChange={(e) => { setHourlyRate(e.target.value); setShowResult(false); }}
+                className="w-full bg-[#06090B] border border-[#1A2E35] rounded-lg px-4 py-3 text-white text-lg focus:outline-none focus:border-[#2FB7FF] transition-colors placeholder:text-[#3A4F58]"
+              />
+            </div>
+          </div>
+
+          {/* Calculate Button */}
+          <div className="text-center mb-8">
+            <button
+              onClick={handleCalculate}
+              disabled={!canCalculate}
+              className="bg-[#2FB7FF] hover:bg-[#1DA1E8] disabled:opacity-40 disabled:cursor-not-allowed text-black font-bold text-sm px-8 py-3 rounded-full transition-all duration-200"
+            >
+              Calculate My Waste
+            </button>
+          </div>
+
+          {/* Result */}
+          {showResult && (
+            <div className="text-center">
+              <div
+                className="bg-gradient-to-br from-[#0F1E25] to-[#0A1214] border border-[#2FB7FF]/20 rounded-xl p-6 md:p-8 mb-6"
+                style={{ boxShadow: '0 0 40px rgba(47,183,255,0.08)' }}
+              >
+                <p className="text-[#8B9CA3] text-sm mb-4">You've wasted approximately</p>
+                <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-10 mb-4">
+                  <div>
+                    <span className="text-[42px] md:text-[56px] font-extrabold text-[#2FB7FF] leading-none">
+                      {totalDays.toFixed(1)}
+                    </span>
+                    <p className="text-[#8B9CA3] text-sm mt-1">days</p>
+                  </div>
+                  <span className="text-[#3A4F58] text-2xl hidden md:block">&</span>
+                  <div>
+                    <span className="text-[42px] md:text-[56px] font-extrabold text-[#F59E0B] leading-none">
+                      {moneyCost >= 100000
+                        ? `${(moneyCost / 100000).toFixed(2)}L`
+                        : moneyCost >= 1000
+                        ? `${(moneyCost / 1000).toFixed(1)}K`
+                        : moneyCost.toFixed(0)
+                      }
+                    </span>
+                    <p className="text-[#8B9CA3] text-sm mt-1">INR this year</p>
+                  </div>
+                </div>
+                <p className="text-[#8B9CA3] text-xs">
+                  waiting for upload bars. That's {totalHoursPerYear.toFixed(0)} hours of staring at progress bars.
+                </p>
+              </div>
+
+              {/* Share Button */}
+              <button
+                onClick={handleShare}
+                className="inline-flex items-center gap-2 bg-[#1A2E35] hover:bg-[#243D47] text-white text-sm font-medium px-6 py-2.5 rounded-full transition-colors"
+              >
+                <Share2 size={14} />
+                {copied ? 'Copied!' : 'Share your score'}
+              </button>
+              <p className="text-[#5B7A85] text-[11px] mt-3">
+                One click generates a shareable message with your upload waste score
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Footer() {
   return (
     <footer className="py-12 px-6 bg-[#000A0D] border-t border-[#001C25]">
@@ -1536,6 +1706,8 @@ function Footer() {
         <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed">
           © 2026 JoinCloud by Vinay Shakyawar | Marketing Partner{' '}
           <a href="https://arevei.com" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">Arevei.com</a>
+          {' · '}
+          <a href="#calculator" className="hover:text-primary transition-colors" data-testid="link-calculator">Calculator</a>
           {' · '}
           <a href="/privacy" className="hover:text-primary transition-colors" data-testid="link-privacy">Privacy Policy</a>
           {' · '}
@@ -1579,6 +1751,7 @@ export default function Landing() {
           <WhoItsFor />
           <HowItWorks />
           <ComparisonTable />
+          <UploadWasteCalculator />
           <WaitlistSection waitlistRef={waitlistRef} />
           <FeedbackSection />
           <SupportSection />
