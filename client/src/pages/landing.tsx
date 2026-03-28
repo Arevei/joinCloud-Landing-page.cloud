@@ -953,31 +953,57 @@ function WhatJoinCloudIs() {
   ];
 
   return (
-    <section className="border-t border-[#001C25] bg-[#00080A] py-24 px-6">
-      <div className="max-w-3xl mx-auto text-center mb-14">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary mb-2">The product</p>
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-          Turn your system storage into a personal cloud.
-        </h2>
-        <p className="text-muted-foreground text-lg leading-relaxed">
-          JoinCloud uses the storage space on your own device as a local personal cloud. Add files once. Share from one place. Collaborate with your team. Preview image and video content in the browser before downloading, on any device, any network, anywhere.
-        </p>
+    <section className="border-t border-[#001C25] bg-[#00080A] overflow-hidden">
+      {/* Hero image with overlaid text */}
+      <div className="relative w-full" style={{ minHeight: '420px' }}>
+        <img
+          src="/constellation.jpg"
+          alt="Night sky with constellations"
+          className="w-full h-[420px] md:h-[520px] object-cover object-center"
+          loading="lazy"
+        />
+        {/* Gradient overlays for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#00080A] via-[#00080A]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#00080A]/60 via-transparent to-[#00080A]" />
+
+        {/* Text overlay */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#2FB7FF] mb-3">The product</p>
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 max-w-3xl leading-tight drop-shadow-lg">
+            Turn your system storage into a personal cloud.
+          </h2>
+          <p className="text-white/70 text-sm md:text-lg leading-relaxed max-w-2xl drop-shadow">
+            Add files once. Share from one place. Collaborate with your team. Preview content in the browser before downloading, on any device, anywhere.
+          </p>
+        </div>
       </div>
-      <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
-        {pillars.map((pillar, index) => {
-          const Icon = pillar.icon;
-          return (
-            <Card key={index} className="bg-[#000405] border-[#001C25] hover:border-primary/30 transition-all duration-200" data-testid={`pillar-${index + 1}`}>
-              <CardContent className="p-8 text-center">
-                <div className="w-14 h-14 rounded-xl bg-primary/15 border border-primary/20 flex items-center justify-center mb-6 mx-auto">
-                  <Icon className="w-7 h-7 text-primary" />
+
+      {/* Pillar cards — overlapping the image bottom */}
+      <div className="max-w-6xl mx-auto px-6 -mt-16 md:-mt-20 relative z-10 pb-20">
+        <div className="grid md:grid-cols-3 gap-5">
+          {pillars.map((pillar, index) => {
+            const Icon = pillar.icon;
+            const accentColors = ['#2FB7FF', '#7C3AED', '#0E7490'];
+            const accent = accentColors[index] || '#2FB7FF';
+            return (
+              <div
+                key={index}
+                className="bg-[#0A1214]/90 backdrop-blur-md border border-[#1A2E35] rounded-2xl p-7 text-center hover:border-opacity-60 transition-all duration-300"
+                style={{ boxShadow: `0 0 40px ${accent}08`, borderColor: `${accent}25` }}
+                data-testid={`pillar-${index + 1}`}
+              >
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 mx-auto"
+                  style={{ background: `${accent}15`, border: `1px solid ${accent}30` }}
+                >
+                  <Icon className="w-6 h-6" style={{ color: accent }} />
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-3">{pillar.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{pillar.description}</p>
-              </CardContent>
-            </Card>
-          );
-        })}
+                <h3 className="text-lg font-bold text-foreground mb-2">{pillar.title}</h3>
+                <p className="text-[#8B9CA3] text-sm leading-relaxed">{pillar.description}</p>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
