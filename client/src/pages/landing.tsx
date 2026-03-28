@@ -8,6 +8,23 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Download, Folder, Share2, Shield, Zap, HardDrive, Globe, Monitor, Send, Link2, UserX, Wifi, Bell, Users, Smartphone, QrCode, FolderOpen, Eye, Mail, MessageCircle, Headphones } from "lucide-react";
+import { createContext, useContext } from "react";
+
+/* ── Spots-remaining counter (shared across all sections) ──── */
+const SpotsContext = createContext(31);
+function useSpotsRemaining() { return useContext(SpotsContext); }
+function SpotsProvider({ children }: { children: React.ReactNode }) {
+  const [spots, setSpots] = useState(31);
+  useEffect(() => {
+    // Simulate real-time scarcity: randomly drop 1 spot every 45-90s
+    const tick = () => {
+      setSpots((s) => (s > 5 ? s - 1 : s)); // floor at 5
+    };
+    const id = setInterval(tick, (45 + Math.random() * 45) * 1000);
+    return () => clearInterval(id);
+  }, []);
+  return <SpotsContext.Provider value={spots}>{children}</SpotsContext.Provider>;
+}
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -167,6 +184,59 @@ function MouseSpeedEffect() {
     </div>
   );
 }
+/* ── Navbar spots badge ─────────────────────────────────────── */
+function NavSpotsCounter() {
+  const spots = useSpotsRemaining();
+  return (
+    <div
+      className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full"
+      style={{
+        background: 'rgba(239,68,68,0.1)',
+        border: '1px solid rgba(239,68,68,0.25)',
+      }}
+    >
+      <span
+        className="inline-block w-1.5 h-1.5 rounded-full"
+        style={{
+          background: '#EF4444',
+          boxShadow: '0 0 6px rgba(239,68,68,0.6)',
+          animation: 'pulse 2s ease-in-out infinite',
+        }}
+      />
+      <span style={{ color: '#F87171', fontSize: '11px', fontWeight: 700, letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>
+        {spots} spots left
+      </span>
+    </div>
+  );
+}
+
+/* ── Spots banner (above waitlist form) ─────────────────────── */
+function SpotsCounterBanner() {
+  const spots = useSpotsRemaining();
+  return (
+    <div
+      className="flex items-center justify-center gap-3 mb-6 py-3 px-5 rounded-xl mx-auto"
+      style={{
+        background: 'rgba(239,68,68,0.06)',
+        border: '1px solid rgba(239,68,68,0.2)',
+        maxWidth: '420px',
+      }}
+    >
+      <span
+        className="inline-block w-2 h-2 rounded-full shrink-0"
+        style={{
+          background: '#EF4444',
+          boxShadow: '0 0 8px rgba(239,68,68,0.6)',
+          animation: 'pulse 2s ease-in-out infinite',
+        }}
+      />
+      <span style={{ color: '#F87171', fontSize: '14px', fontWeight: 700, letterSpacing: '0.01em' }}>
+        Only <span style={{ color: '#FBBF24', fontSize: '18px' }}>{spots}</span> spots remaining in private beta
+      </span>
+    </div>
+  );
+}
+
 function Header({ onJoinWaitlistClick }: { onJoinWaitlistClick: () => void }) {
   const [scrolled, setScrolled] = useState(false);
 
@@ -235,7 +305,8 @@ function Header({ onJoinWaitlistClick }: { onJoinWaitlistClick: () => void }) {
           </nav>
 
           {/* Right side actions */}
-          <div className="ml-auto shrink-0 z-10 flex items-center" style={{ gap: '16px' }}>
+          <div className="ml-auto shrink-0 z-10 flex items-center" style={{ gap: '12px' }}>
+            <NavSpotsCounter />
             <button
               onClick={onJoinWaitlistClick}
               data-testid="button-join-waitlist-header"
@@ -443,6 +514,7 @@ function NodeNetwork() {
 }
 
 function Hero({ onJoinWaitlistClick }: { onJoinWaitlistClick: () => void }) {
+  const spots = useSpotsRemaining();
   return (
     <section
       className="flex flex-col justify-center overflow-hidden"
@@ -454,7 +526,7 @@ function Hero({ onJoinWaitlistClick }: { onJoinWaitlistClick: () => void }) {
 
         {/* Eyebrow */}
         <p style={{ color: '#2FB7FF', fontSize: '11px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '14px' }}>
-          By creator, for creators - Private Beta · 31 spots remaining
+          By creator, for creators - Private Beta · {spots} spots remaining
         </p>
 
         {/* Headline */}
@@ -1313,10 +1385,10 @@ function WaitlistSection({ waitlistRef }: { waitlistRef: React.RefObject<HTMLDiv
           <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
             JoinCloud launches April 12, 2026. Join the waitlist now to lock in a 30-day free trial and one year of free updates for our first 1,000 beta users only.
           </p>
-          <p className="mt-3 text-sm text-muted-foreground">
-            31 spots remaining in private beta.
-          </p>
         </div>
+
+        {/* Urgent spots counter above form */}
+        <SpotsCounterBanner />
 
         <Card className="bg-[#00080A] border-[#001C25]">
           <CardContent className="p-8">
@@ -1494,23 +1566,25 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header onJoinWaitlistClick={handleJoinWaitlistClick} />
-      <main>
-        <Hero onJoinWaitlistClick={handleJoinWaitlistClick} />
-        <ProblemSection />
-        <OldVsJoinCloudSection />
-        <OurStorySection />
-        <WhatJoinCloudIs />
-        <Features />
-        <WhoItsFor />
-        <HowItWorks />
-        <ComparisonTable />
-        <WaitlistSection waitlistRef={waitlistRef} />
-        <FeedbackSection />
-        <SupportSection />
-      </main>
-      <Footer />
-    </div>
+    <SpotsProvider>
+      <div className="min-h-screen bg-background">
+        <Header onJoinWaitlistClick={handleJoinWaitlistClick} />
+        <main>
+          <Hero onJoinWaitlistClick={handleJoinWaitlistClick} />
+          <ProblemSection />
+          <OldVsJoinCloudSection />
+          <OurStorySection />
+          <WhatJoinCloudIs />
+          <Features />
+          <WhoItsFor />
+          <HowItWorks />
+          <ComparisonTable />
+          <WaitlistSection waitlistRef={waitlistRef} />
+          <FeedbackSection />
+          <SupportSection />
+        </main>
+        <Footer />
+      </div>
+    </SpotsProvider>
   );
 }
