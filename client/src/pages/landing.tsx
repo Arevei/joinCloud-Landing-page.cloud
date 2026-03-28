@@ -289,7 +289,7 @@ function Header({ onJoinWaitlistClick }: { onJoinWaitlistClick: () => void }) {
             {[
               { label: 'Features',    href: '#features',    testId: 'link-features' },
               { label: 'How It Works',href: '#how-it-works',testId: 'link-how-it-works' },
-              { label: 'Pricing',     href: '#pricing',     testId: '' },
+              { label: 'Product',     href: '#product',     testId: '' },
               // { label: 'Blog',        href: '/blog',        testId: 'link-blog' },
             ].map((link) => (
               <a
@@ -1111,7 +1111,7 @@ function ComparisonTable() {
   ];
 
   return (
-    <section id="pricing" className="py-24 px-6 bg-[#00080A] border-t border-[#001C25]">
+    <section id="product" className="py-24 px-6 bg-[#00080A] border-t border-[#001C25]">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-10">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary mb-2">Side by side</p>
