@@ -11,19 +11,15 @@ import { Download, Folder, Share2, Shield, Zap, HardDrive, Globe, Monitor, Send,
 import { createContext, useContext } from "react";
 
 /* ── Spots-remaining counter (shared across all sections) ──── */
-const SpotsContext = createContext(31);
-function useSpotsRemaining() { return useContext(SpotsContext); }
+const SpotsContext = createContext({ spots: 29, decrement: () => {} });
+function useSpotsRemaining() { return useContext(SpotsContext).spots; }
+function useSpotsDecrement() { return useContext(SpotsContext).decrement; }
 function SpotsProvider({ children }: { children: React.ReactNode }) {
-  const [spots, setSpots] = useState(31);
-  useEffect(() => {
-    // Simulate real-time scarcity: randomly drop 1 spot every 45-90s
-    const tick = () => {
-      setSpots((s) => (s > 5 ? s - 1 : s)); // floor at 5
-    };
-    const id = setInterval(tick, (45 + Math.random() * 45) * 1000);
-    return () => clearInterval(id);
+  const [spots, setSpots] = useState(29);
+  const decrement = useCallback(() => {
+    setSpots((s) => (s > 0 ? s - 1 : 0));
   }, []);
-  return <SpotsContext.Provider value={spots}>{children}</SpotsContext.Provider>;
+  return <SpotsContext.Provider value={{ spots, decrement }}>{children}</SpotsContext.Provider>;
 }
 import {
   DropdownMenu,
@@ -1336,6 +1332,7 @@ function WaitlistSection({ waitlistRef }: { waitlistRef: React.RefObject<HTMLDiv
   const [profession, setProfession] = useState("");
   const [phone, setPhone] = useState<string | undefined>();
   const { toast } = useToast();
+  const decrementSpots = useSpotsDecrement();
 
   const waitlistMutation = useMutation({
     mutationFn: async (data: { name: string; email: string; profession: string; phone?: string }) => {
@@ -1372,6 +1369,7 @@ function WaitlistSection({ waitlistRef }: { waitlistRef: React.RefObject<HTMLDiv
       return response.json();
     },
     onSuccess: () => {
+      decrementSpots();
       toast({
         title: "You're on the list!",
         description: "We'll notify you by email before JoinCloud officially launches.",
